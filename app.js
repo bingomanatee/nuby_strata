@@ -4,10 +4,9 @@
  * 
  */
 
-var strata = require('strata');
-var config = require(__dirname + '/config');
+var Config = require(__dirname + '/config');
 var strata_mvc = require('strata_mvc');
+var config = new Config(__dirname);
 
-config.init(__dirname);
-
-strata_mvc.load_apps(__dirname + '/apps', config);
+var app = strata_mvc.load_apps(config.app_path, config);
+app.run();
