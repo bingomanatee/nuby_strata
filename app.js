@@ -3,10 +3,19 @@
  * CORE APPLICATION
  * 
  */
+ var strata_mvc = require('nuby-strata');
+var config = require('./config').create(__dirname);
 
-var Config = require(__dirname + '/config');
-var strata_mvc = require('strata_mvc');
-var config = new Config(__dirname);
+var context = nuby_strata.context.create(config);
 
-var app = strata_mvc.load_apps(config.app_path, config);
-app.run();
+function _on_app(err, app) {
+    if (err) return callback(err);
+
+    callback(err, app);
+}
+
+var app = new strata.Builder();
+app.use(strata.contentType, 'text/plain');
+app.use(strata.contentLength);
+
+nuby_strata.load_apps(config.app_path, _on_app, context, app);
