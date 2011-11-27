@@ -8,28 +8,28 @@ not working.
 
 The goals of Nuby_Strata are:
 
-  # Has a loader that loads actions and controllers from one or more app directories that deliver the
+1. Has a loader that loads actions and controllers from one or more app directories that deliver the
     below behaviors. Controllers have "Loader types" -- so far, the only types are "default" and "rest",
     but you can create a custom loader that interprets applications in any manner you like.
-  # Create an action centric folder structure, wherein a majority the custom resources
+2. Create an action centric folder structure, wherein a majority the custom resources
     required for an action are contained either in the action folder,
     or in the controller folder, as opposed to organizing items by their type (view, controller, model)
     which I find unhelpful.
-  # Create "Flow templates" - scaffolding -- that has hooks that allow you to only customize the
+3. Create "Flow templates" - scaffolding -- that has hooks that allow you to only customize the
     part of the action flow that deviates from the norm.
-  # Allow for "Run and gun" REST.
-  # Create standards for fully integrated auth, user and i18n filters and routing.
+4. Allow for "Run and gun" REST.
+5. Create standards for fully integrated auth, user and i18n filters and routing.
 
 # Action Flow
 
 The archetype flow of an action is:
 
-  # extract params from request (throw error)
-  # check permissions for action access through action hook `can` (throw error)
-  # interact with model through action hook `data` (throw error) - can be input, retrieval, editing, deletion, etc.
-  # render response through action hook `render` (throw error) - may also set headers.
-  # optionally encase content with layout though action hook `layout`
-  # pass result of rendering through strata callback app_callback
+1. extract params from request (throw error)
+2. check permissions for action access through action hook `can` (throw error)
+3. interact with model through action hook `data` (throw error) - can be input, retrieval, editing, deletion, etc.
+4. render response through action hook `render` (throw error) - may also set headers.
+5. optionally encase content with layout though action hook `layout`
+6. pass result of rendering through strata callback app_callback
 
 These action hooks can be easily delegated to methods of the same names in their governing controller.
 Said methods when delegated include the action as a parameter to allow discrimination in the controller
