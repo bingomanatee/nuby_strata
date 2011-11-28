@@ -1,9 +1,10 @@
 var nuby_strata = require('nuby-strata');
 
 module.exports = {
-    create:function (root, port) {
-        var config = new nuby_strata.config.create(root, port, 'arena_colles_3');
-        config.lang = new nuby_strata.lang(config.default_lang, root + '/dict');
+    create:function (root) {
+        var config = nuby_strata.config.create({ROOT:root, port:3000});
+        config.MONGODB.DB_NAME = 'arena_colles_3';
+        config.lang = nuby_strata.lang.create(root + '/dict', config.default_lang);
         return config;
     }
 

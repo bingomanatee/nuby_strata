@@ -1,5 +1,4 @@
-
-exports = {
-    name: 'index',
-    type: 'home'
-}
+module.exports = {
+    name:'home',
+    'type': 'default'
+};
