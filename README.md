@@ -54,3 +54,32 @@ as per REST conventions.
 All of this complexity and granularity suits my style - however the only absolute requirement of the handle
 hook is that it passes (code, {headers}, output) to its callback or forwards to another path.
 
+# Appliction Components
+
+## Context
+
+The context is a container that holds everything the application requires:
+
+  * The app -- the resource that responds to requests
+  * The controller -- the resource that holds shared routines for a suite of actions
+  * Models
+  * Any shared state registries
+
+All actions, controllers and models refer back to the context. 
+
+## Actions 
+Actions are where the "action" is. They contain all the callbacks and are incredibly extensible for custom flow. 
+For the most part, most requests should be handled by one or two actions (generally two in the case of one action for
+"work" and the other action for "summary" display. 
+
+Actions have a handle method that return a callback that gets inserted into the app in tandem with a route. 
+This callback meets the profile of a strata handler, but is a gateway to the larger digestive system of the action class. 
+That being said -- actions are completely under designer control, and while the default action has an involved digetive tract,
+a custom action can have architecture particular to its needs and does not HAVE to inherit from the Action class. 
+
+## Controllers
+Controllers are very thin in nuby_strata. Every function that an action can complete -- data handling, layout, 
+authentication -- is by default handled by the actions themselves and only optionally delegated in cases where 
+shared solutions across a series of acitons is useful. They are by convention associated with a single model, but
+that is up to the developer to decide; the data method can contain any number of model interactions, and that
+is up to the app designer to determine. 
