@@ -71,11 +71,15 @@ All actions, controllers and models refer back to the context.
 Actions are where the "action" is. They contain all the callbacks and are incredibly extensible for custom flow. 
 For the most part, most requests should be handled by one or two actions (generally two in the case of one action for
 "work" and the other action for "summary" display. 
+## Action::handle
 
-Actions have a handle method that return a callback that gets inserted into the app in tandem with a route. 
+Actions have a handle method that returns a callback that gets inserted into the app in tandem with a route. 
 This callback meets the profile of a strata handler, but is a gateway to the larger digestive system of the action class. 
 That being said -- actions are completely under designer control, and while the default action has an involved digetive tract,
 a custom action can have architecture particular to its needs and does not HAVE to inherit from the Action class. 
+
+note - the handle method _is not itself a callback_. It *returns* a callback in order 
+to establish association back to the action through closures.
 
 ## Controllers
 Controllers are very thin in nuby_strata. Every function that an action can complete -- data handling, layout, 
