@@ -86,4 +86,98 @@ Controllers are very thin in nuby_strata. Every function that an action can comp
 authentication -- is by default handled by the actions themselves and only optionally delegated in cases where 
 shared solutions across a series of acitons is useful. They are by convention associated with a single model, but
 that is up to the developer to decide; the data method can contain any number of model interactions, and that
-is up to the app designer to determine. 
+is up to the app designer to determine.
+
+# The Callback Maze
+
+The callbacks can be a bit confusing - partly because they are "nonimus" named functions, and partly because there are a
+lot of them.
+
+The most important callback is the "app_callback" == the strata app. it has a signature
+  function(status: int, headers: object, body: string | stream)
+
+The other methods in action call each other and have callbacks specifically designed to recieve their output.
+
+## adapting callbacks
+
+There are a lot of functions in tha action pipeline that are NOT designed to pass along env and the
+strata callback. Params, for instance is designed to just return the parameters from the environment.
+
+To maintain state, these "extraction functions" are passed a callback that DOES track state, adapting
+them to the action flow.
+
+For instance, _on_params -- the action method -- expects (err, params, env, app_callback);
+Howver strata.request.params passes to its callback (err, params).
+
+So we prepare an adapting callback __in the body handle__ (before we call req.params)
+to pass along to req.params that adds the state parameters
+to its output and returns all of this to the next call, thanks to closure.
+
+  function _on_params(err, params){
+    action._on_params(err, params, env, app_callback)
+  }
+
+Creating an adaptive callback not only ensures that we pass along context information,
+it also __passes along the action object itself, as "this"__.
+
+Most methods - render, data, params, etc. have a matching named callback
+_on_[name]. The _on_name callback has a custom profile. To keep state,
+before it is passed in as a callback, it is encased in a local function to
+maintain context.
+
+`app_callback(code, headers, content)` is defined by the strata routing api.
+
+  * code is a response code; 200 == ok, etc.
+  * headers are key/value pairs.
+  * content is the response value - generally an HTML web page,
+    or a JSON or XML string block. A stream/buffer can also be passed.
+
+## _handle(env, app_callback) **request handler**
+
+handle is inserted into the routing mechanism of strata (by handle()) and is the
+initial recipient of environmental data.
+
+It starts the chain of response by harvesting parameters via strata.Request.params(_on_params)
+
+## [strata.Request.params(_on_params(err, params)) **parser**
+
+Note that the Request object has access to env as it is passed in on instantiation.
+
+### _on_params(err, params, env, app_callback) **env parser**
+
+adds params to env._request_params and calls action.can(env, _on_can, _on_block). note that the _on_params
+that is bundled with the default action merges the route parameters in with the request parameters.
+
+# action.can(test, yes_callback(), no_callback()) -- **auth router**
+
+Note this is a general auth utility method that can be used for any auth checking action.
+it is intially called to see if you are authorized to access the action with the parameter test = 'respond'
+These two local handlers route to action.data and action.error respectively.
+
+note that the callbacks have no parameters - they are simply called - so they have to contain
+all the passalongs (env, app_callback) through closure.
+
+# action.data (env, _on_data_callback(err, data)) **data gateway**
+
+This is the "Work part" of the action  - any data retrieval, alteration, input, etc. are done here.
+_on_data has the profile (err, data) -- what data is is application dependant. The default _on_data
+that is a method of action attaches the data to env._data.
+
+The _on_data_callback is created inside the yes_callback; the _on_data callback
+bundled with the action class routes to either _format or render.
+
+# _format (env, format, app_callback) **router/rendererer**
+
+format is a switch that routes data to a rendering solution. It is designed initially for
+REST and other processes that output straight data (XML, or other non-HTML formats.)
+note that HTM/HTML formmatting is equivalent to rendering stright out through render.
+
+# render (env, on_render(err, content)) ** renderer**
+
+Render is designed to produce a content (string) block.
+it is the on_render handler's responsibility to pass this on to the app callback
+
+
+
+
+
