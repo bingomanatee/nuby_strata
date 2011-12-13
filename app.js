@@ -15,6 +15,9 @@ var context = nuby_strata.context.create(config);
 var app = new strata.Builder();
 app.use(strata.contentType, 'text/plain');
 app.use(strata.contentLength);
+if (config.public_path){
+    app.use(strata.static, config.public_path);
+}
 
 function _on_app(err, context) {
     if (err){

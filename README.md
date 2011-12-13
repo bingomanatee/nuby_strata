@@ -132,10 +132,10 @@ maintain context.
   * content is the response value - generally an HTML web page,
     or a JSON or XML string block. A stream/buffer can also be passed.
 
-## _handle(env, app_callback) **request handler**
+## _handle(env, app_callback)
 
-handle is inserted into the routing mechanism of strata (by handle()) and is the
-initial recipient of environmental data.
+**request handler** _handle is inserted into the routing mechanism of strata (by handle()) and is the
+initial recipient of environmental data. It encapsulates all the activity below.
 
 It starts the chain of response by harvesting parameters via strata.Request.params(_on_params)
 
@@ -143,39 +143,40 @@ It starts the chain of response by harvesting parameters via strata.Request.para
 
 Note that the Request object has access to env as it is passed in on instantiation.
 
-### _on_params(err, params, env, app_callback) **env parser**
+### _on_params(err, params, env, app_callback)
 
-adds params to env._request_params and calls action.can(env, _on_can, _on_block). note that the _on_params
+**env parser** adds params to env._request_params and calls action.can(env, _on_can, _on_block). note that the _on_params
 that is bundled with the default action merges the route parameters in with the request parameters.
 
-# action.can(test, yes_callback(), no_callback()) -- **auth router**
+## action.can(test, yes_callback(), no_callback())
 
-Note this is a general auth utility method that can be used for any auth checking action.
+**auth router** Note this is a general auth utility method that can be used for any auth checking action.
 it is intially called to see if you are authorized to access the action with the parameter test = 'respond'
 These two local handlers route to action.data and action.error respectively.
 
 note that the callbacks have no parameters - they are simply called - so they have to contain
 all the passalongs (env, app_callback) through closure.
 
-# action.data (env, _on_data_callback(err, data)) **data gateway**
+## action.data (env, _on_data_callback(err, data))
 
-This is the "Work part" of the action  - any data retrieval, alteration, input, etc. are done here.
+**data gateway** This is the "Work part" of the action  - any data retrieval, alteration, input, etc. are done here.
 _on_data has the profile (err, data) -- what data is is application dependant. The default _on_data
 that is a method of action attaches the data to env._data.
 
 The _on_data_callback is created inside the yes_callback; the _on_data callback
 bundled with the action class routes to either _format or render.
 
-# _format (env, format, app_callback) **router/rendererer**
+## _format (env, format, app_callback)
 
-format is a switch that routes data to a rendering solution. It is designed initially for
+**router/rendererer** _format is a switch that routes data to a rendering solution. It is designed initially for
 REST and other processes that output straight data (XML, or other non-HTML formats.)
 note that HTM/HTML formmatting is equivalent to rendering stright out through render.
 
-# render (env, on_render(err, content)) ** renderer**
+## render (env, on_render(err, content))
 
-Render is designed to produce a content (string) block.
-it is the on_render handler's responsibility to pass this on to the app callback
+** renderer** render is designed to produce a content (string) block.
+it is the on_render handler's responsibility to pass this on to the app callback. Note that this is
+the last change for normal (HTML) pages but is skipped for raw (file, JSON, REST) content.
 
 
 
