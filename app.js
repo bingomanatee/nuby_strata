@@ -15,14 +15,13 @@ var context = nuby_strata.context.create(config);
 var app = new strata.Builder();
 app.use(strata.contentType, 'text/plain');
 app.use(strata.contentLength);
-if (config.public_path){
-    app.use(strata.static, config.public_path);
-}
+app.use(nuby_strata.loader.static.create, config.static_resources);
 
 function _on_app(err, context) {
     if (err){
         throw err;
     }
+    console.log('_on_run - context = %s', util.inspect(context, true, 0));
     context.run();
 }
 
