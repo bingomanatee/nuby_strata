@@ -14,6 +14,10 @@ module.exports = {
         config.layout_root = root + '/layouts';
         config.lang = nuby_strata.lang.create(root + '/dict', config.default_lang);
         config.static_resources.push(public_resource);
+        config.session = {
+            secret: 'mars is h0ll0w',
+            name: 'ac_session'
+        };
         return config;
     }
 

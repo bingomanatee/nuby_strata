@@ -1,5 +1,6 @@
 
 
 module.exports = {
-    name: 'ac'
+    prefix: '/ac',
+    file_dir: __dirname + '/public'
 }

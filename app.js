@@ -16,6 +16,7 @@ var app = new strata.Builder();
 app.use(strata.contentType, 'text/plain');
 app.use(strata.contentLength);
 app.use(nuby_strata.loader.static.create, config.static_resources);
+app.use(strata.sessionCookie, config.session);
 
 function _on_app(err, context) {
     if (err){
